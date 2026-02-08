@@ -1,0 +1,28 @@
+name: trading-bot
+services:
+  - name: app
+    ports:
+      - port: 8080
+        http_path: /health
+    env:
+      - name: TELEGRAM_TOKEN
+        secret: telegram-token
+      - name: LOG_LEVEL
+        value: INFO
+      - name: TZ
+        value: UTC
+    healthcheck:
+      http:
+        path: /health
+        port: 8080
+      initial_delay: 30
+      period: 10
+      timeout: 5
+    routes:
+      - port: 8080
+        path: /
+    autoscaling:
+      min: 1
+      max: 1
+    instance:
+      type: nano
