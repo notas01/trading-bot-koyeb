@@ -1,28 +1,36 @@
-name: trading-bot
-services:
-  - name: app
-    ports:
-      - port: 8080
-        http_path: /health
-    env:
-      - name: TELEGRAM_TOKEN
-        secret: telegram-token
-      - name: LOG_LEVEL
-        value: INFO
-      - name: TZ
-        value: UTC
-    healthcheck:
-      http:
-        path: /health
-        port: 8080
-      initial_delay: 30
-      period: 10
-      timeout: 5
-    routes:
-      - port: 8080
-        path: /
-    autoscaling:
-      min: 1
-      max: 1
-    instance:
-      type: nano
+name: trading-bot-koyeb
+# dockerfile: Dockerfile  # Si tu Dockerfile tiene otro nombre, descomenta esta línea
+
+routes:
+  - port: 8080
+    path: /
+
+# Variables de entorno (configúralas en el dashboard de Koyeb)
+# env:
+#   - name: TELEGRAM_TOKEN
+#     value: "tu_token_aqui"
+#   - name: PORT
+#     value: "8080"
+
+# Health checks optimizados
+health_checks:
+  http:
+    path: /health
+    port: 8080
+    initial_delay: 30  # Esperar 30 segundos antes del primer check
+    interval: 30       # Check cada 30 segundos
+    timeout: 10        # Timeout de 10 segundos
+    unhealthy_threshold: 3  # 3 fallos consecutivos antes de marcar como unhealthy
+    healthy_threshold: 2    # 2 éxitos consecutivos para marcar como healthy
+
+# Recursos (ajusta según necesites)
+# instances:
+#   - type: nano
+#     count: 1
+
+# Escalado automático (opcional)
+# auto_scaling:
+#   metric: cpu
+#   target: 60
+#   min: 1
+#   max: 3
